@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pizza Shop Login</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -135,6 +136,42 @@
     </footer>
 
     <script>
+      function encryptCredentials(username, password) {
+        // Encrypt username and password using AES encryption
+        var encryptedUsername = CryptoJS.AES.encrypt(
+          username,
+          "secretKey"
+        ).toString();
+        var encryptedPassword = CryptoJS.AES.encrypt(
+          password,
+          "secretKey"
+        ).toString();
+
+        // Save the encrypted credentials to localStorage
+        localStorage.setItem("username", encryptedUsername);
+        localStorage.setItem("password", encryptedPassword);
+      }
+
+      function decryptCredentials() {
+        // Retrieve encrypted credentials from localStorage
+        var encryptedUsername = localStorage.getItem("username");
+        var encryptedPassword = localStorage.getItem("password");
+
+        // Decrypt the credentials
+        var decryptedUsername = CryptoJS.AES.decrypt(
+          encryptedUsername,
+          "secretKey"
+        ).toString(CryptoJS.enc.Utf8);
+        var decryptedPassword = CryptoJS.AES.decrypt(
+          encryptedPassword,
+          "secretKey"
+        ).toString(CryptoJS.enc.Utf8);
+
+        // Use decrypted credentials
+        console.log("Decrypted Username:", decryptedUsername);
+        console.log("Decrypted Password:", decryptedPassword);
+      }
+
       document
         .getElementById("loginForm")
         .addEventListener("submit", function (event) {
@@ -143,9 +180,8 @@
           var username = document.getElementById("username").value;
           var password = document.getElementById("password").value;
 
-          // Save the username and password locally
-          //localStorage.setItem("username", username);
-          //localStorage.setItem("password", password);
+          // Encrypt and save the username and password
+          encryptCredentials(username, password);
 
           // Fade out the login container
           document.querySelector(".container").classList.add("hidden");
